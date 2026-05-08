@@ -1,0 +1,44 @@
+# ninja log v5
+2	36	0	/home/alex/Documents/dpsv55/build/CMakeFiles/cmake.verify_globs	2446c89f4107b0b1
+36	40	1776881572786789818	DPSV55Controller_artefacts/JuceLibraryCode/JuceHeader.h	5a89ea8b6a29732f
+36	40	1776881572786789818	/home/alex/Documents/dpsv55/build/DPSV55Controller_artefacts/JuceLibraryCode/JuceHeader.h	5a89ea8b6a29732f
+40	53	1776881572800533425	CMakeFiles/DPSV55Controller.dir/_deps/juce-src/modules/juce_audio_processors/juce_audio_processors_ara.cpp.o	d9d83a25c705a825
+40	53	1776881572800533425	CMakeFiles/DPSV55Controller.dir/_deps/juce-src/modules/juce_audio_processors/juce_audio_processors_lv2_libs.cpp.o	91035e528be9d614
+53	65	1776881572812865476	CMakeFiles/DPSV55Controller.dir/_deps/juce-src/modules/juce_core/juce_core_CompilationTime.cpp.o	a5ba8e5db18666a4
+53	3955	1776881576699751888	CMakeFiles/DPSV55Controller.dir/_deps/juce-src/modules/juce_data_structures/juce_data_structures.cpp.o	e84fa3d90bbdee83
+40	4639	1776881577384745257	CMakeFiles/DPSV55Controller.dir/Source/PluginProcessor.cpp.o	3a5679d723c95bbe
+41	5419	1776881578163737717	CMakeFiles/DPSV55Controller.dir/_deps/juce-src/modules/juce_events/juce_events.cpp.o	5db666b31ba1ab0f
+40	5490	1776881578236737011	CMakeFiles/DPSV55Controller.dir/Source/PluginEditor.cpp.o	26208cf00333cd4b
+36	5625	1776881578369735724	CMakeFiles/juce_vst3_helper.dir/_deps/juce-src/modules/juce_audio_plugin_client/VST3/juce_VST3ManifestHelper.cpp.o	2819762864387793
+5625	5703	1776881578448850419	juce_vst3_helper	a2384800a59f8326
+5704	5719	1776881578465734796	CMakeFiles/DPSV55Controller_VST3.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_AAX_utils.cpp.o	8d50082092e21a73
+5703	5721	1776881578468803322	CMakeFiles/DPSV55Controller_VST3.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_AAX.cpp.o	1e3b848c1bfc51b3
+5719	5734	1776881578480205841	CMakeFiles/DPSV55Controller_VST3.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_ARA.cpp.o	6bfdb97c28bfa11c
+5721	5736	1776881578482734631	CMakeFiles/DPSV55Controller_VST3.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_LV2.cpp.o	6128a5bbc376f24a
+5735	5749	1776881578495734505	CMakeFiles/DPSV55Controller_VST3.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_Standalone.cpp.o	ef8799f694ff9352
+5736	5750	1776881578497685576	CMakeFiles/DPSV55Controller_VST3.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_Unity.cpp.o	2a9855f8e354ca8f
+5749	5765	1776881578511734350	CMakeFiles/DPSV55Controller_VST3.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_VST2.cpp.o	f100fdc0aa2cf579
+40	10995	1776881583738683852	CMakeFiles/DPSV55Controller.dir/_deps/juce-src/modules/juce_gui_extra/juce_gui_extra.cpp.o	9bcbf9c14a25606d
+65	11673	1776881584418677292	CMakeFiles/DPSV55Controller.dir/_deps/juce-src/modules/juce_audio_basics/juce_audio_basics.cpp.o	ab78728191fffb4
+3956	12607	1776881585350668306	CMakeFiles/DPSV55Controller.dir/_deps/juce-src/modules/juce_audio_utils/juce_audio_utils.cpp.o	5ffbda0ffda80d68
+5422	13324	1776881586068661385	CMakeFiles/DPSV55Controller.dir/_deps/juce-src/modules/juce_audio_devices/juce_audio_devices.cpp.o	48cbfd27e050b3d5
+40	14746	1776881587489647697	CMakeFiles/DPSV55Controller.dir/_deps/juce-src/modules/juce_audio_processors/juce_audio_processors.cpp.o	8aa09c342622188
+5752	19326	1776881592068603653	CMakeFiles/DPSV55Controller_VST3.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_VST3.cpp.o	77edfe43cdfe9c1f
+4641	21551	1776881594293582288	CMakeFiles/DPSV55Controller.dir/_deps/juce-src/modules/juce_audio_formats/juce_audio_formats.cpp.o	30e99279830a82b5
+41	32678	1776881605419475801	CMakeFiles/DPSV55Controller.dir/_deps/juce-src/modules/juce_graphics/juce_graphics.cpp.o	f3a93ad6347a1f49
+41	33306	1776881606047469807	CMakeFiles/DPSV55Controller.dir/_deps/juce-src/modules/juce_graphics/juce_graphics_Harfbuzz.cpp.o	be37d24a27896fe2
+41	36161	1776881608899442610	CMakeFiles/DPSV55Controller.dir/_deps/juce-src/modules/juce_core/juce_core.cpp.o	3317092e849f62ea
+41	44827	1776881617560360240	CMakeFiles/DPSV55Controller.dir/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics.cpp.o	292a5b0a00d0df86
+44827	45262	1776881617971700072	DPSV55Controller_artefacts/Release/libDPS-V55 Controller_SharedCode.a	9d485f1b838096e0
+45262	45494	1776881618194354223	DPSV55Controller_artefacts/Release/VST3/DPS-V55 Controller.vst3/Contents/x86_64-linux/DPS-V55 Controller.so	14110590a2870f2b
+3	40	0	/home/alex/Documents/dpsv55/build/CMakeFiles/cmake.verify_globs	2446c89f4107b0b1
+46	2922	1776882928775683255	CMakeFiles/DPSV55Controller.dir/Source/PluginProcessor.cpp.o	3a5679d723c95bbe
+46	3339	1776882929192679907	CMakeFiles/DPSV55Controller.dir/Source/PluginEditor.cpp.o	26208cf00333cd4b
+3339	3567	1776882929382278084	DPSV55Controller_artefacts/Release/libDPS-V55 Controller_SharedCode.a	9d485f1b838096e0
+3567	3798	1776882929605676589	DPSV55Controller_artefacts/Release/VST3/DPS-V55 Controller.vst3/Contents/x86_64-linux/DPS-V55 Controller.so	14110590a2870f2b
+9	51	0	/home/alex/Documents/dpsv55/build/CMakeFiles/cmake.verify_globs	2446c89f4107b0b1
+73	3341	1776958183791568824	CMakeFiles/DPSV55Controller.dir/Source/PluginProcessor.cpp.o	3a5679d723c95bbe
+2	37	0	/home/alex/Documents/dpsv55/build/CMakeFiles/cmake.verify_globs	2446c89f4107b0b1
+44	3546	1776958217811811587	CMakeFiles/DPSV55Controller.dir/Source/PluginEditor.cpp.o	26208cf00333cd4b
+3546	4051	1776958218275662154	DPSV55Controller_artefacts/Release/libDPS-V55 Controller_SharedCode.a	9d485f1b838096e0
+4051	4320	1776958218535715514	DPSV55Controller_artefacts/Release/VST3/DPS-V55 Controller.vst3/Contents/x86_64-linux/DPS-V55 Controller.so	14110590a2870f2b
