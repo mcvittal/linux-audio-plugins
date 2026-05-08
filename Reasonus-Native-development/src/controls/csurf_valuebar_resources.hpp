@@ -1,0 +1,53 @@
+#ifndef CSURF_VALUEBAR_RESOURCES_H_
+#define CSURF_VALUEBAR_RESOURCES_H_
+
+enum ChannelValueBar
+{
+    VALUEBAR_1 = 0x30,
+    VALUEBAR_2 = 0x31,
+    VALUEBAR_3 = 0x32,
+    VALUEBAR_4 = 0x33,
+    VALUEBAR_5 = 0x34,
+    VALUEBAR_6 = 0x35,
+    VALUEBAR_7 = 0x36,
+    VALUEBAR_8 = 0x37,
+    VALUEBAR_9 = 0x40,
+    VALUEBAR_10 = 0x41,
+    VALUEBAR_11 = 0x42,
+    VALUEBAR_12 = 0x43,
+    VALUEBAR_13 = 0x44,
+    VALUEBAR_14 = 0x45,
+    VALUEBAR_15 = 0x46,
+    VALUEBAR_16 = 0x47,
+};
+
+enum ChannelValueBarMode
+{
+    VALUEBAR_MODE_1 = 0x38,
+    VALUEBAR_MODE_2 = 0x39,
+    VALUEBAR_MODE_3 = 0x3a,
+    VALUEBAR_MODE_4 = 0x3b,
+    VALUEBAR_MODE_5 = 0x3c,
+    VALUEBAR_MODE_6 = 0x3d,
+    VALUEBAR_MODE_7 = 0x3e,
+    VALUEBAR_MODE_8 = 0x3f,
+    VALUEBAR_MODE_9 = 0x48,
+    VALUEBAR_MODE_10 = 0x49,
+    VALUEBAR_MODE_11 = 0x4a,
+    VALUEBAR_MODE_12 = 0x4b,
+    VALUEBAR_MODE_13 = 0x4c,
+    VALUEBAR_MODE_14 = 0x4d,
+    VALUEBAR_MODE_15 = 0x4e,
+    VALUEBAR_MODE_16 = 0x4f,
+};
+
+enum ValuebarMode
+{
+    VALUEBAR_MODE_NORMAL = 0,
+    VALUEBAR_MODE_BIPOLAR = 1,
+    VALUEBAR_MODE_FILL = 2,
+    VALUEBAR_MODE_SPREAD = 3,
+    VALUEBAR_MODE_OFF = 4,
+};
+
+#endif

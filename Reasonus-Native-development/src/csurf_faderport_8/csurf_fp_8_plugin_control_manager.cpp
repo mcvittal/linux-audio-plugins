@@ -1,0 +1,253 @@
+#ifndef CSURF_FP_8_PLUGIN_CONTROL_MANAGER_C_
+#define CSURF_FP_8_PLUGIN_CONTROL_MANAGER_C_
+
+#include "csurf_fp_8_channel_manager.hpp"
+
+class CSurf_FP_8_PluginControlManager : public CSurf_FP_8_ChannelManager
+{
+protected:
+    mINI::INIStructure ini;
+    ReaSonusSettings *settings = ReaSonusSettings::GetInstance(FP_8);
+    std::string fileName;
+    int updateCount;
+    bool editStepSize;
+    int stepSize;
+
+    std::string getParamKey(std::string prefix, int index)
+    {
+        std::string controlIndex = std::to_string(index);
+        return prefix + controlIndex;
+    }
+
+    void GetCurrentPlugin()
+    {
+        MediaTrack *media_track = context->GetPluginEditTrack();
+        int plugin_id = context->GetPluginEditPluginId();
+        std::string plugin_type = DAW::GetTrackFxType(media_track, plugin_id);
+        std::string plugin_name = DAW::GetTrackFxName(media_track, plugin_id);
+        std::string developer_name = DAW::GetTrackFxDeveloper(media_track, plugin_id);
+        fileName = GetReaSonusPluginPath(developer_name, plugin_name, plugin_type);
+
+        mINI::INIFile file(fileName);
+        if (!file.read(ini))
+        {
+            ini["Global"];
+            ini["Global"]["origName"] = plugin_name;
+            ini["Global"]["name"] = plugin_name;
+            ini["Global"]["type"] = plugin_type;
+            ini["Global"]["developer"] = developer_name;
+            (void)file.generate(ini, true);
+        }
+    }
+
+    void SaveIniFile()
+    {
+        mINI::INIFile file(fileName);
+        file.write(ini, true);
+    }
+
+public:
+    CSurf_FP_8_PluginControlManager(
+        std::vector<CSurf_FP_8_Track *> tracks,
+        CSurf_FP_8_Navigator *navigator,
+        CSurf_Context *context,
+        midi_Output *m_midiout) : CSurf_FP_8_ChannelManager(tracks, navigator, context, m_midiout)
+    {
+        context->ResetChannelManagerItemIndex();
+        context->SetChannelManagerItemsCount(CSurf_Context::GetPluginMaxGroupCount());
+        GetCurrentPlugin();
+        UpdateTracks(true);
+        color = ButtonColorWhiteDim;
+        editStepSize = false;
+    }
+
+    ~CSurf_FP_8_PluginControlManager() {};
+
+    void UpdateTracks(bool force_update) override
+    {
+        std::string paramKey;
+        force_update = true;
+        MediaTrack *media_track = context->GetPluginEditTrack();
+        int pluginId = context->GetPluginEditPluginId();
+
+        for (int i = 0; i < context->GetNbChannels(); i++)
+        {
+            bool displayStepSize = editStepSize && i == 0;
+            char buffer[255];
+            int filterIndex = context->GetChannelManagerItemIndex() + i;
+            CSurf_FP_8_Track *track = tracks.at(i);
+            track->SetTrackColor(color);
+
+            // If the track is armed always blink as an indication it is armed
+            track->SetSelectButtonValue(BTN_VALUE_OFF, force_update);
+            track->SetMuteButtonValue(BTN_VALUE_OFF, force_update);
+            track->SetSoloButtonValue(BTN_VALUE_OFF, force_update);
+
+            track->SetDisplayMode(DISPLAY_MODE_2, force_update);
+
+            paramKey = getParamKey("Select_", filterIndex);
+            if (ini.has(paramKey) && ini[paramKey]["param"] != "")
+            {
+                Inverted inverted = ini[paramKey].has("uninvert-label") && ini[paramKey]["uninvert-label"] == "1" ? NON_INVERT : INVERT;
+
+                track->SetDisplayLine(0, ALIGN_CENTER, ini[paramKey]["name"].c_str(), inverted, force_update);
+                TrackFX_GetFormattedParamValue(media_track, pluginId, stoi(ini[paramKey]["param"]), buffer, sizeof(buffer));
+                track->SetDisplayLine(1, ALIGN_CENTER, buffer, NON_INVERT, force_update);
+            }
+            else
+            {
+                track->SetDisplayLine(0, ALIGN_CENTER, "", NON_INVERT, force_update);
+                track->SetDisplayLine(1, ALIGN_CENTER, "", NON_INVERT, true);
+            }
+
+            paramKey = getParamKey("Fader_", filterIndex);
+            if (ini.has(paramKey) && ini[paramKey]["param"] != "")
+            {
+                if (!displayStepSize)
+                {
+                    Inverted inverted = ini[paramKey].has("uninvert-label") && ini[paramKey]["uninvert-label"] == "1" ? NON_INVERT : INVERT;
+
+                    track->SetDisplayLine(2, ALIGN_CENTER, ini[paramKey]["name"].c_str(), inverted, force_update);
+                    TrackFX_GetFormattedParamValue(media_track, pluginId, stoi(ini[paramKey]["param"]), buffer, sizeof(buffer));
+                    track->SetDisplayLine(3, ALIGN_CENTER, buffer, NON_INVERT, force_update);
+                }
+                double value = TrackFX_GetParamNormalized(media_track, pluginId, stoi(ini[paramKey]["param"]));
+                track->SetFaderValue((int)(value * 16383.0), force_update);
+                track->SetValueBarMode(VALUEBAR_MODE_FILL);
+                track->SetValueBarValue((int)(value * 127.0));
+            }
+            else
+            {
+                if (!displayStepSize)
+                {
+                    track->SetDisplayLine(2, ALIGN_CENTER, "", NON_INVERT, force_update);
+                    track->SetDisplayLine(3, ALIGN_CENTER, "", NON_INVERT, true);
+                }
+                track->SetFaderValue(0, force_update);
+                track->SetValueBarMode(VALUEBAR_MODE_OFF);
+                track->SetValueBarValue(0);
+            }
+
+            if (displayStepSize)
+            {
+                track->SetDisplayLine(2, ALIGN_CENTER, "Step size", INVERT, force_update);
+                track->SetDisplayLine(3, ALIGN_CENTER, std::to_string(stepSize).c_str(), INVERT, force_update);
+            }
+        }
+
+        force_update = false;
+    }
+
+    void HandleEndcoderPush(int value) override
+    {
+        (void)value;
+        if (!editStepSize)
+        {
+            stepSize = stoi(settings->GetSetting("surface", "plugin-step-size", "1"));
+            context->SetPanEncoderMode(PanEncoderPluginStepSizeMode);
+        }
+        else
+        {
+            settings->SetAndSaveSetting("surface", "plugin-step-size", std::to_string(stepSize));
+            context->SetPanEncoderMode(PanEncoderPluginControlMode);
+        }
+        editStepSize = !editStepSize;
+    }
+
+    void HandleEndcoderIncrement(int value) override
+    {
+        (void)value;
+        stepSize = minmax(1, stepSize + 1, context->GetNbChannels());
+    }
+
+    void HandleEndcoderDecrement(int value) override
+    {
+        (void)value;
+        stepSize = minmax(1, stepSize - 1, context->GetNbChannels());
+    }
+
+    void HandleSelectClick(int index, int value) override
+    {
+        if (value == 0)
+        {
+            return;
+        }
+
+        int controlIndex = context->GetChannelManagerItemIndex() + index;
+        MediaTrack *media_track = context->GetPluginEditTrack();
+        int pluginId = context->GetPluginEditPluginId();
+        std::string paramKey = getParamKey("Select_", controlIndex);
+
+        if (ini.has(paramKey) && ini[paramKey]["param"] != "")
+        {
+            int paramId = stoi(ini[paramKey]["param"]);
+
+            int nbSteps = stoi(ini[paramKey]["steps"]);
+            if (nbSteps == 1)
+            {
+                nbSteps = 2;
+            }
+            double value = TrackFX_GetParamNormalized(media_track, pluginId, paramId);
+            double stepSize = 1.0 / (nbSteps - 1);
+            double newValue = int((value + stepSize) * 100);
+            if (newValue > 100)
+            {
+                newValue = 0;
+            }
+
+            TrackFX_SetParamNormalized(media_track, pluginId, paramId, newValue / 100);
+        }
+    }
+
+    void HandleMuteClick(int index, int value) override
+    {
+        (void)index;
+        (void)value;
+        // If in edit mode
+        // Edit the current assignment
+        // Else do nothing
+    }
+
+    void HandleSoloClick(int index, int value) override
+    {
+        (void)index;
+        (void)value;
+    }
+
+    void HandleFaderTouch(int index, int value) override
+    {
+        int controlIndex = context->GetChannelManagerItemIndex() + index;
+        int pluginId = context->GetPluginEditPluginId();
+
+        std::string paramKey = getParamKey("Fader_", controlIndex);
+
+        if (ini.has(paramKey))
+        {
+            MediaTrack *media_track = context->GetPluginEditTrack();
+            if (!media_track || value > 0)
+            {
+                return;
+            }
+
+            TrackFX_EndParamEdit(media_track, pluginId, stoi(ini[paramKey]["param"]));
+        }
+    }
+
+    void HandleFaderMove(int index, int msb, int lsb) override
+    {
+        int controlIndex = context->GetChannelManagerItemIndex() + index;
+        int pluginId = context->GetPluginEditPluginId();
+
+        std::string paramKey = getParamKey("Fader_", controlIndex);
+
+        if (ini.has(paramKey))
+        {
+            MediaTrack *media_track = context->GetPluginEditTrack();
+            double value = int14ToNormalized(msb, lsb);
+
+            TrackFX_SetParamNormalized(media_track, pluginId, stoi(ini[paramKey]["param"]), value);
+        }
+    }
+};
+
+#endif

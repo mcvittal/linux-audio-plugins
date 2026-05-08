@@ -1,0 +1,34 @@
+//{{NO_DEPENDENCIES}}
+// Microsoft Developer Studio generated include file.
+// Used by res.rc
+//
+#define DIALOG_FONT 14, "Helvetica"
+
+#define IDOK 1
+#define IDCANCEL 2
+#define IDI_ICON1 101
+#define IDD_DIALOG_REASONUS_NATIVE 102
+#define IDD_DIALOG_REASONUS_NATIVE_V2 106
+#define IDC_COMBO_MIDI_IN 1004
+#define IDC_COMBO_MIDI_OUT 1005
+#define IDC_STATIC 1006
+#define IDC_GROUP_MIDI_DEVICES 1007
+#define IDC_COMBO_SURFACE 1008
+#define IDC_GROUP_SURFACE 1009
+#define IDC_GROUP_SETTINGS 1010
+#define IDC_BUTTON_DOCUMENTTION 1041
+#define IDC_BUTTON_CONTROL_PANEL 1043
+#define IDC_VERSION 1042
+
+#define ID_QUIT 40000
+
+// Next default values for new objects
+//
+#ifdef APSTUDIO_INVOKED
+#ifndef APSTUDIO_READONLY_SYMBOLS
+#define _APS_NEXT_RESOURCE_VALUE 103
+#define _APS_NEXT_COMMAND_VALUE 40001
+#define _APS_NEXT_CONTROL_VALUE 1004
+#define _APS_NEXT_SYMED_VALUE 101
+#endif
+#endif

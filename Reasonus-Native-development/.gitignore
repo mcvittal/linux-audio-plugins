@@ -1,0 +1,12 @@
+.vscode/*
+!.vscode/launch.json
+**/.DS_Store
+/*build*
+/*out*
+/third_party/*
+/WDL
+/.idea
+/.vs
+
+/lib/*
+!/lib/CMakeLists.txt
