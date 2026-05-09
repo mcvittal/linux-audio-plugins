@@ -224,21 +224,7 @@ public:
 
     void HandleShiftButton(int value)
     {
-        int time = GetTickCount();
-        shiftState.active = value > 0;
-
-        if (shiftState.start == 0)
-        {
-            shiftState.start = time;
-        }
-        else
-        {
-            if (time - shiftState.start < TOGGLE_SPEED)
-            {
-                shiftState.ToggleInvert();
-            }
-            shiftState.start = 0;
-        }
+        shiftState.SetValue(value > 0);
         context->SetShiftRight(shiftState.IsActive());
         context->SetShiftRightLocked(shiftState.IsLocked());
 

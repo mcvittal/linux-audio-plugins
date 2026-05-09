@@ -99,7 +99,7 @@ struct ShiftState
         }
         else
         {
-            if (time - start < TOGGLE_SPEED)
+            if (time - start < TOGGLE_SPEED || invert)
             {
                 ToggleInvert();
             }
