@@ -123,9 +123,9 @@ CSurf_FP_8_FaderManager::CSurf_FP_8_FaderManager(
 CSurf_FP_8_FaderManager::~CSurf_FP_8_FaderManager()
 {
     delete channelManager;
-    delete navigator;
-    delete context;
+    for (auto *t : tracks) delete t;
     tracks.clear();
+    // navigator and context are owned by the main class, not freed here
 };
 
 void CSurf_FP_8_FaderManager::Refresh(bool force)

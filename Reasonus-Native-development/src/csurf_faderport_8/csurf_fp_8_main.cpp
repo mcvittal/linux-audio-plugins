@@ -52,6 +52,8 @@ class CSurf_FaderPort : public IReaperControlSurface
   DWORD surface_update_lastrun;
   DWORD surface_update_keepalive;
   DWORD surface_update_settings_check;
+  bool m_show_version_message = false;
+  bool m_midi_initialized = false;
 
   I18n *i18n = I18n::GetInstance();
   ReaSonusSettings *settings = ReaSonusSettings::GetInstance(FP_8);
@@ -392,28 +394,65 @@ public:
 
     if (std::string(GIT_VERSION).compare(DAW::GetExtState(EXT_STATE_KEY_VERSION, "")) != 0)
     {
-      ReaSonusMessage::Start();
+      m_show_version_message = true;
       DAW::SetExtState(EXT_STATE_KEY_VERSION, GIT_VERSION, true);
       I18n::checkLocalesFiles();
     }
 
-    errStats = 0;
+    (void)errStats;
     m_midi_in_dev = settings->GetMidiInput();
     m_midi_out_dev = settings->GetMidiOutput();
 
     surface_update_lastrun = 0;
+    surface_update_keepalive = 0;
+    surface_update_settings_check = 0;
 
-    // create midi hardware access
-    m_midiin = m_midi_in_dev >= 0 ? CreateMIDIInput(m_midi_in_dev) : NULL;
-    m_midiout = m_midi_out_dev >= 0 ? CreateMIDIOutput(m_midi_out_dev, false, NULL) : NULL;
+    // MIDI ports created in InitMidi() on first Run() to avoid JACK race condition during startup.
+    m_midiin = NULL;
+    m_midiout = NULL;
 
     context = new CSurf_Context(settings->GetSurface());
     updateSettings();
 
     for (int i = 0; i < context->GetNbChannels(); i++)
     {
-      CSurf_FP_8_Track *track = new CSurf_FP_8_Track(i, context, m_midiout);
-      tracks.push_back(track);
+      tracks.push_back(new CSurf_FP_8_Track(i, context, NULL));
+    }
+    lastTouchedFxTrack = new CSurf_FP_8_Track(context->GetNbChannels() - 1, context, NULL);
+
+    trackNavigator = new CSurf_FP_8_Navigator(context);
+    sessionManager = new CSurf_FP_8_SessionManager(context, trackNavigator, NULL);
+    faderManager = new CSurf_FP_8_FaderManager(context, trackNavigator, NULL);
+    mixManager = new CSurf_FP_8_MixManager(context, trackNavigator, faderManager, NULL);
+    transportManager = new CSurf_TransportManager(context, NULL);
+    automationManager = new CSurf_FP_8_AutomationManager(context, faderManager, NULL);
+    generalControlManager = new CSurf_FP_8_GeneralControlManager(context, trackNavigator, faderManager, NULL);
+    lastTouchedFxManager = new CSurf_FP_8_LastTouchedFXManager(lastTouchedFxTrack, context, NULL);
+  }
+
+  void InitMidi()
+  {
+    m_midi_initialized = true;
+
+    m_midiin = m_midi_in_dev >= 0 ? CreateMIDIInput(m_midi_in_dev) : NULL;
+    m_midiout = m_midi_out_dev >= 0 ? CreateMIDIOutput(m_midi_out_dev, false, NULL) : NULL;
+
+    // Recreate all tracks and managers with the real MIDI output.
+    for (auto *track : tracks) delete track;
+    tracks.clear();
+    delete lastTouchedFxManager;
+    delete generalControlManager;
+    delete automationManager;
+    delete transportManager;
+    delete mixManager;
+    delete faderManager;
+    delete sessionManager;
+    delete trackNavigator;
+    delete lastTouchedFxTrack;
+
+    for (int i = 0; i < context->GetNbChannels(); i++)
+    {
+      tracks.push_back(new CSurf_FP_8_Track(i, context, m_midiout));
     }
     lastTouchedFxTrack = new CSurf_FP_8_Track(context->GetNbChannels() - 1, context, m_midiout);
 
@@ -426,24 +465,7 @@ public:
     generalControlManager = new CSurf_FP_8_GeneralControlManager(context, trackNavigator, faderManager, m_midiout);
     lastTouchedFxManager = new CSurf_FP_8_LastTouchedFXManager(lastTouchedFxTrack, context, m_midiout);
 
-    if (errStats)
-    {
-      ShowConsoleMsg("Error: ");
-      ShowConsoleMsg((char *)errStats);
-      if (m_midi_in_dev >= 0 && !m_midiin)
-      {
-        *errStats |= 1;
-      }
-      if (m_midi_out_dev >= 0 && !m_midiout)
-      {
-        *errStats |= 2;
-      }
-    }
-
-    if (m_midiin)
-    {
-      m_midiin->start();
-    }
+    if (m_midiin) m_midiin->start();
 
     if (m_midiout)
     {
@@ -510,6 +532,7 @@ public:
     DELETE_ASYNC(m_midiin);
     m_midiout = 0;
     m_midiin = 0;
+    m_midi_initialized = false;
   }
 
   bool GetTouchState(MediaTrack *media_track, int is_pan)
@@ -519,6 +542,15 @@ public:
 
   void Run()
   {
+    if (m_show_version_message)
+    {
+      m_show_version_message = false;
+      ReaSonusMessage::Start();
+    }
+
+    if (!m_midi_initialized)
+      InitMidi();
+
     if (m_midiin)
     {
       m_midiin->SwapBufsPrecise(GetTickCount(), 0.0);

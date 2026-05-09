@@ -59,12 +59,7 @@ public:
         CSurf_Context *context,
         midi_Output *m_midiout) : tracks(tracks), navigator(navigator), context(context), m_midiout(m_midiout) {};
 
-    virtual ~CSurf_FP_8_ChannelManager()
-    {
-        delete navigator;
-        delete context;
-        delete m_midiout;
-    };
+    virtual ~CSurf_FP_8_ChannelManager() {};
 
     virtual void UpdateTracks(bool force_update = false)
     {
